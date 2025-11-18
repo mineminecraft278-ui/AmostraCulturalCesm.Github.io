@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Consul Teen - Quiz Tecnologia</title>
+  <style>
+    :root{--blue:#0b3b82;--red:#c21b2a;--yellow:#f2bf00;--bg:#ffffff}
+    *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+    body{margin:0;background:var(--bg);color:#111}
+    header{display:flex;align-items:center;gap:16px;padding:18px 24px;border-bottom:1px solid #eee}
+    header img.logo{height:64px}
+    header h1{margin:0;font-size:22px;color:var(--blue)}
+
+    main{max-width:960px;margin:28px auto;padding:0 16px}
+    .card{background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06);padding:20px}
+
+    .question-count{font-weight:600;color:#666}
+    .question{font-size:20px;margin:12px 0 18px}
+
+    .options{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{flex:1 1 200px;padding:14px;border-radius:10px;border:2px solid transparent;font-weight:700;cursor:pointer;min-width:140px}
+    .btn:active{transform:translateY(1px)}
+    .btn.clicar{background:var(--blue);color:#fff}
+    .btn.nao{background:#fff;color:var(--blue);border-color:var(--blue)}
+
+    .explain{margin-top:14px;padding:12px;border-radius:8px;background:#f8fafc;border:1px solid #eef6ff}
+
+    .controls{display:flex;gap:8px;align-items:center;margin-top:16px}
+    .controls button{padding:10px 12px;border-radius:8px;border:0;background:var(--red);color:#fff;font-weight:700;cursor:pointer}
+
+    .score{margin-left:auto;font-weight:800;color:var(--blue)}
+
+    footer{max-width:960px;margin:18px auto;padding:8px 16px;color:#666;font-size:13px}
+
+    .correct { background: #4caf50 !important; color: #fff !important; }
+    .incorrect { background: #ff5252 !important; color: #fff !important; }
+  </style>
+</head>
+<body>
+  <header>
+    <img class="logo" src="./WhatsApp Image 2025-11-14 at 16.03.14.jpeg" alt="CONSUL TEEN - logo">
+    <h1>CONSUL TEEN — Quiz de Tecnologia (30 perguntas)</h1>
+  </header>
+
+  <main>
+    <div class="card" id="quizCard">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="question-count" id="qCount">Pergunta 1 de 30</div>
+        <div class="score" id="score">Pontuação: 0</div>
+      </div>
+
+      <div class="question" id="questionText">Carregando pergunta...</div>
+
+      <div class="options">
+        <button class="btn clicar" id="btnClicar">Clicar</button>
+        <button class="btn nao" id="btnNao">Não Clicar</button>
+      </div>
+
+      <div class="explain" id="explain" style="display:none"></div>
+
+      <div class="controls">
+        <button id="nextBtn" style="background:var(--yellow);color:#111; display:none;">Próxima</button>
+        <button id="restartBtn" style="background:var(--blue);">Reiniciar</button>
+        <div style="flex:1"></div>
+      </div>
+    </div>
+
+    <div style="height:18px"></div>
+
+    <div class="card" style="padding:14px;margin-top:10px">
+      <strong>Dicas rápidas:</strong>
+      <ul>
+        <li>Se desconfiar de links em mensagens, não clique — confirme por canais oficiais.</li>
+        <li>Use senhas fortes e autenticação em dois fatores.</li>
+        <li>Mantenha sistema e apps atualizados.</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer>
+    Projeto de demonstração — CONSUL TEEN. Cores base inspiradas na logo (azul, amarelo e vermelho). Sem salas; jogue sozinho ou compartilhe sua tela.
+  </footer>
+
+  <script>
+    const questions = [
+      {q: "Você recebeu uma mensagem dizendo que seu banco foi bloqueado e há um link para recuperar.", explain: "Não. Bancos raramente pedem dados por link — entre em contato pelo app oficial."},
+      {q: "Um e-mail pede que você atualize sua senha e contém um botão direto.", explain: "Acesse o site oficial manualmente e troque a senha."},
+      {q: "Recebeu oferta de um smartphone muito barato por mensagem.", explain: "Provavelmente é golpe."},
+      {q: "Um site desconhecido solicita download de .exe para ver um vídeo.", explain: "Executáveis desconhecidos podem ter vírus."},
+      {q: "O app pede permissões de câmera e microfone para rodar um jogo simples.", explain: "Permita somente o necessário."},
+      {q: "Amigo pede dinheiro via link fora do app usual.", explain: "Confirme antes de clicar."},
+      {q: "Seu navegador alerta de atualização do Flash.", explain: "Flash é obsoleto; golpes usam isso."},
+      {q: "HTTPS significa segurança total?", explain: "HTTPS não garante que o site é confiável."},
+      {q: "Recrutador desconhecido envia PDF.", explain: "Anexos podem conter vírus."},
+      {q: "Convite com link externo suspeito em rede social.", explain: "Cheque a autenticidade."},
+      {q: "Atualização oficial do sistema operacional.", explain: "Atualizações oficiais são seguras."},
+      {q: "App na loja oficial pede atualização.", explain: "Atualizar melhora segurança."},
+      {q: "Link encurtado desconhecido.", explain: "Use ferramentas para expandir o link."},
+      {q: "PDF de boleto com dados estranhos.", explain: "Sempre confira o emissor."},
+      {q: "Contato pede código SMS.", explain: "Nunca envie códigos de verificação."},
+      {q: "App bem avaliado na loja oficial.", explain: "Pode instalar."},
+      {q: "Software grátis em site alternativo.", explain: "Prefira fontes oficiais."},
+      {q: "Ligação pedindo dados pessoais.", explain: "Não forneça."},
+      {q: "Formulário pedindo CPF e senha.", explain: "Instituições nunca pedem senha."},
+      {q: "IA desconhecida pedindo login real.", explain: "Use conta separada."},
+      {q: "Página oficial com download.", explain: "Baixar é seguro."},
+      {q: "Link prometendo prêmio.", explain: "Golpe clássico."},
+      {q: "Antivírus detecta arquivo suspeito.", explain: "Confie no antivírus."},
+      {q: "Ativar fontes desconhecidas no Android.", explain: "Risco alto."},
+      {q: "Vaga pedindo edição no Drive.", explain: "Evite dar permissão total."},
+      {q: "App desconhecido para 2FA.", explain: "Use apps conhecidos."},
+      {q: "Colega envia zip sem avisar.", explain: "Confirme antes de abrir."},
+      {q: "Usar banco no Wi-Fi público.", explain: "Evite sem VPN."},
+      {q: "Site pede notificações para liberar conteúdo.", explain: "Pode gerar spam."}
+    ];
+
+    let idx = 0, score = 0;
+    const total = questions.length;
+
+    const qCountEl = document.getElementById('qCount');
+    const questionText = document.getElementById('questionText');
+    const btnClicar = document.getElementById('btnClicar');
+    const btnNao = document.getElementById('btnNao');
+    const explainEl = document.getElementById('explain');
+    const scoreEl = document.getElementById('score');
+
+    function getCorrectAnswer(index){
+      return (index % 2 === 0) ? 'nao' : 'clicar';
+    }
+
+    function render(){
+      const p = questions[idx];
+      qCountEl.textContent = `Pergunta ${idx+1} de ${total}`;
+      questionText.textContent = p.q;
+      explainEl.style.display = 'none';
+      btnClicar.disabled = false;
+      btnNao.disabled = false;
+      btnClicar.classList.remove("correct","incorrect");
+      btnNao.classList.remove("correct","incorrect");
+    }
+
+    function autoNext(){
+      setTimeout(()=>{
+        idx++;
+        if(idx >= total){
+          finish();
+        } else {
+          render();
+        }
+      }, 5000);
+    }
+
+    function showResult(correct, explanation, button){
+      explainEl.style.display = 'block';
+      explainEl.innerHTML = (correct? '<strong>Correto!</strong> ' : '<strong>Incorreto.</strong> ') + explanation;
+
+      if(correct) score++;
+
+      scoreEl.textContent = `Pontuação: ${score}`;
+
+      btnClicar.disabled = true;
+      btnNao.disabled = true;
+
+      if(correct){
+        button.classList.add("correct");
+      } else {
+        button.classList.add("incorrect");
+      }
+
+      autoNext();
+    }
+
+    function finish(){
+      questionText.textContent = `Fim! Você acertou ${score} de ${total}.`;
+      qCountEl.textContent = 'Resultado';
+      explainEl.style.display = 'block';
+      explainEl.innerHTML = `Compartilhe sua pontuação: <strong>${score} / ${total}</strong>`;
+      btnClicar.style.display = 'none';
+      btnNao.style.display = 'none';
+    }
+
+    btnClicar.addEventListener('click', ()=>{
+      const correct = getCorrectAnswer(idx) === 'clicar';
+      showResult(correct, questions[idx].explain, btnClicar);
+    });
+
+    btnNao.addEventListener('click', ()=>{
+      const correct = getCorrectAnswer(idx) === 'nao';
+      showResult(correct, questions[idx].explain, btnNao);
+    });
+
+    restartBtn.addEventListener('click', ()=>{
+      idx = 0;
+      score = 0;
+      btnClicar.style.display = '';
+      btnNao.style.display = '';
+      render();
+      scoreEl.textContent = `Pontuação: ${score}`;
+    });
+
+    render();
+  </script>
+</body>
+</html>
+
